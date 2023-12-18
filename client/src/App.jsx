@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Routes, Route} from 'react-router-dom'
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/Home'
@@ -6,6 +5,8 @@ import Signup from './pages/Signup'
 import Login from './pages/Login';
 import Chat from './pages/Chat'
 import AuthGuard from './components/AuthGuard'
+import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
@@ -21,6 +22,19 @@ function App() {
         </Route> 
       </Route> 
     </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        />
+      <ToastContainer />
     </>
   )
 }

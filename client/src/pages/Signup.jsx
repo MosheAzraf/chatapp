@@ -1,6 +1,5 @@
 import {useState} from 'react'
 import { BiHide, BiShow } from "react-icons/bi";
-import useAuth from '../hooks/useAuth';
 import ErrorMessage from '../components/ErrorMessage';
 
 
@@ -12,7 +11,6 @@ const Signup = () => {
     password:""
   });
   const [error, setError] = useState(null);
-  const {register} = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignUpChange = (e) => {
@@ -27,18 +25,6 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    try {
-      await register.mutateAsync({
-        firstName: signUpInputs.firstName,
-        lastName: signUpInputs.lastName,
-        userName: signUpInputs.userName,
-        password: signUpInputs.password,
-      });
-    } catch (error) {
-      if(error) {
-        setError(error);
-      }
-    }
   }  
   
   return (
