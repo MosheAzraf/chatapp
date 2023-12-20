@@ -23,7 +23,7 @@ function App() {
         <Route path='home' element={<Home/>}/>
         <Route path='signup' element={<Signup/>}/>
         <Route path='login' element={<Login/>}/>
-        <Route path='chat' element={<AuthGuard/>}>
+        <Route path='chat' element={<AuthGuard isAuth={isSuccess}/>}>
           <Route index element={<Chat/>}/>
         </Route> 
       </Route> 
