@@ -7,6 +7,7 @@ const AuthGuard = ({isAuth}) => {
     if(!isAuth){
       navigate('/login');
     }
+    navigate('/chat');
   },[isAuth])
 
   return <Outlet/>
