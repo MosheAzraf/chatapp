@@ -23,7 +23,7 @@ function App() {
       </Route> 
     </Routes>
       <ToastContainer
-        position="top-right"
+        position="top-left"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -34,7 +34,6 @@ function App() {
         pauseOnHover
         theme="light"
         />
-      <ToastContainer />
     </>
   )
 }

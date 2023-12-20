@@ -1,6 +1,4 @@
 const User = require('../models/userModel');
-const Chat = require('../models/chatModel');
-const Group = require('../models/groupModel');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -41,7 +39,8 @@ const registerNewUser = async (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
-    const { userName, password} = req.body;
+    const {userName, password} = req.body;
+    console.log(userName, password)
     if(!userName || userName.trim().length === 0 
        || !password || password.trim().length === 0
     ) {

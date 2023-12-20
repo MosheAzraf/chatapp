@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { BiHide, BiShow } from "react-icons/bi";
-import ErrorMessage from '../components/ErrorMessage'
+import useAuth from "../hooks/useAuth";
+import {useNavigate} from 'react-router-dom'
+
 
 const Login = () => {
-  const [error, setError] = useState(null);
+  const {login} = useAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loginInputs, setLoginInputs] = useState({
     userName: "",
@@ -20,9 +23,14 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await login(loginInputs);
+      navigate('/chat')
+    } catch(error) {
+      navigate('/login');
+    }
   };
 
   return (
@@ -72,7 +80,6 @@ const Login = () => {
             </button>
           </div>
         </form>
-        {error && <ErrorMessage message={error} />}
       </div>
     </div>
   );
