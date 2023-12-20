@@ -1,4 +1,4 @@
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import axiosClient from '../configs/axios';
 import {toast} from 'react-toastify';
 
@@ -6,6 +6,11 @@ const loginUser = async (credentials) => {
     const response = await axiosClient.post('/auth/login',credentials);
     return response.data;
 };
+
+const verifyAuth = async () => {
+    const response = await axiosClient.post('/auth/verifyauth')
+    return response.data;
+}
 
 const useAuth = () => {
     const queryClient = useQueryClient();
@@ -30,8 +35,16 @@ const useAuth = () => {
         }
     });
 
+    const { isSuccess } = useQuery({
+        queryKey: ['verifyAuth'],
+        queryFn: verifyAuth,
+        retry:false,
+    });
+
     return { 
-        login: loginMutation.mutateAsync 
+        login: loginMutation.mutateAsync, 
+        isSuccess
+        
     };
 };
 

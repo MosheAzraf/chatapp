@@ -1,19 +1,25 @@
+import { useEffect, useState } from 'react';
 import { Routes, Route} from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
+import useAuth from './hooks/useAuth';
+
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/Home'
 import Signup from './pages/Signup'
 import Login from './pages/Login';
 import Chat from './pages/Chat'
 import AuthGuard from './components/AuthGuard'
-import { ToastContainer } from 'react-toastify'; 
-import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
+  const { isSuccess } = useAuth(); // user is authenticated
+  console.log(isSuccess);
+
 
   return (
     <>
     <Routes>
-      <Route path='/' element={<RootLayout/>}>
+      <Route path='/' element={<RootLayout isAuth={isSuccess} />}>
         <Route path='home' element={<Home/>}/>
         <Route path='signup' element={<Signup/>}/>
         <Route path='login' element={<Login/>}/>

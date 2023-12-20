@@ -3,13 +3,14 @@ import { Outlet, Link } from 'react-router-dom'
 import PublicNavbar from '../components/PublicNavbar';
 
 
-const RootLayout = () => {
-
+const RootLayout = ({isAuth}) => {
 
   return (
     <div className="flex flex-col h-screen">
-     
-      <PublicNavbar/>
+      {
+        isAuth ? <p>Ok.</p> : <PublicNavbar/>
+      }
+      
 
       {/* Content */}
       <div className="flex-grow p-4 bg-gray-100">
