@@ -1,10 +1,9 @@
-import  { useEffect, useState } from 'react'
 import { Outlet, Link } from 'react-router-dom'
 import PublicNavbar from '../components/PublicNavbar';
 
 
 const RootLayout = ({isAuth}) => {
-
+  console.log("rootlayout:", isAuth);
   return (
     <div className="flex flex-col h-screen">
       {

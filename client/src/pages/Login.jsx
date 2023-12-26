@@ -6,7 +6,6 @@ import {useNavigate} from 'react-router-dom'
 
 const Login = () => {
   const {login} = useAuth();
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loginInputs, setLoginInputs] = useState({
     userName: "",
@@ -25,11 +24,10 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
+    try{
       await login(loginInputs);
-      navigate('/chat')
     } catch(error) {
-      navigate('/login');
+      console.log(error);
     }
   };
 

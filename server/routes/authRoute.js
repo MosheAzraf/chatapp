@@ -5,7 +5,5 @@ const {registerNewUser, login, logOut, verifyAuth} = require('../controllers/aut
 router.post('/register', registerNewUser);
 router.post('/login', login);
 router.post('/logout', logOut);
-router.post('/verifyAuth', verifyAuth);
-
 
 module.exports = router;

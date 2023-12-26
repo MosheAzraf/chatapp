@@ -2,7 +2,6 @@ const User = require('../models/userModel');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const verifyJWT = require('../middlewares/verifyJWT');
 require('dotenv').config();
 
 const registerNewUser = async (req, res, next) => {
@@ -86,30 +85,10 @@ const logOut = async (req,res, next) => {
     return res.status(200).json({message:"Logout successful"});
 }
 
-const verifyAuth = async (req, res, next) => {
-    try {
-        if (!req.cookies['accessToken']) {
-            return res.status(401).json({ message: 'Authentication error. Token missing.' });
-        }
 
-        await verifyJWT(req, res, next);
-
-        const foundUser = req.user;
-        console.log(foundUser);
-
-        if (!foundUser) {
-            return res.status(401).json({ message: 'Authentication error. User not found.' });
-        }
-
-        return res.status(200).json({ message: 'verified.'});
-    } catch (error) {
-        return res.status(500);
-    }
-}
 
 module.exports = {
     registerNewUser,
     login,
     logOut,
-    verifyAuth
 }

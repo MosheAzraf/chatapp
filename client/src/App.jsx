@@ -12,24 +12,21 @@ import Chat from './pages/Chat'
 import AuthGuard from './components/AuthGuard'
 
 function App() {
-  const { isSuccess } = useAuth(); // user is authenticated
-  console.log(isSuccess);
-
 
   return (
     <>
     <Routes>
-      <Route path='/' element={<RootLayout isAuth={isSuccess} />}>
+      <Route path='/' element={<RootLayout  />}>
         <Route path='home' element={<Home/>}/>
         <Route path='signup' element={<Signup/>}/>
         <Route path='login' element={<Login/>}/>
-        <Route path='chat' element={<AuthGuard isAuth={isSuccess}/>}>
+        <Route path='chat' element={<AuthGuard />}>
           <Route index element={<Chat/>}/>
         </Route> 
       </Route> 
     </Routes>
       <ToastContainer
-        position="top-left"
+        position="bottom-center"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
