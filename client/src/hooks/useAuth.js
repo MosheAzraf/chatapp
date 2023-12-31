@@ -1,59 +1,76 @@
-import { useEffect, useState } from 'react';
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axiosClient from '../configs/axios';
-import {toast} from 'react-toastify';
+
 import { useNavigate } from 'react-router-dom';
+import {toast} from 'react-toastify';
 
-
+import { useDispatch } from 'react-redux';
+import { setLoggedIn, setLoggedOut } from '../redux/features/authSlice';
 
 const loginUser = async (credentials) => {
     const response = await axiosClient.post('/auth/login',credentials);
     return response.data;
 };
 
-
-
 const logOut = async () => {
     const response = await axiosClient.post('/auth/logout');
     return response.data;
 }
 
-
+const verifyAuth = async () => {
+  const response = await axiosClient.post('/auth/verifyAuth');
+  return response.data
+};
 
 
 const useAuth = () => {
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
-  
+    const dispatch = useDispatch();
+
+
     const loginMutation = useMutation({
       mutationFn: loginUser,
       onSuccess: () => {
-        queryClient.invalidateQueries(['verifyAuth']);
+        dispatch(setLoggedIn());
+        sessionStorage.setItem('isLoggedIn', 'true');
         toast.success('Successfully logged in.');
         navigate('/chat');
       },
       onError: () => {
         navigate('/login');
-        toast.warn("Couldn't login properly, please try again.");
+        toast.error("Couldn't login properly, please try again.");
       }
     });
+    
   
     const logOutMutation = useMutation({
       mutationFn: logOut,
       onSuccess: () => {
-        queryClient.invalidateQueries(['verifyAuth']);
+        dispatch(setLoggedOut());
+        sessionStorage.removeItem('isLoggedIn');
         toast.info('Logged out.');
         navigate('/login');
       },
       onError: (error) => {
         console.error(error);
-        toast.error("Logout failed.");
       }
     });
-  
+
+    const verifyAuthMutation = useMutation({
+      mutationFn:verifyAuth,
+      onSuccess: () => {
+        dispatch(setLoggedIn());
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+
+    })
+
     return {
       login: loginMutation.mutateAsync,
-      logOut: logOutMutation.mutate,
+      logOut: logOutMutation.mutateAsync,
+      verifyAuth: verifyAuthMutation.mutateAsync,
     };
   };
   

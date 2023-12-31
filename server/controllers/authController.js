@@ -70,9 +70,9 @@ const login = async (req, res, next) => {
             maxAge: 24 * 60 * 60 * 1000, // Cookie expires in 1 day (adjust as needed)
         });
 
-        const userDataToSend = { id, firstName, lastName, userName: foundUserName };
+        // const userDataToSend = { id, firstName, lastName, userName: foundUserName };
 
-        return res.status(200).json({"message":"Login successful", user: userDataToSend});
+        return res.status(200).json({"message":"Login successful"});
          
     } else {
         return res.sendStatus(401);
@@ -84,7 +84,6 @@ const logOut = async (req,res, next) => {
     await res.clearCookie('accessToken');
     return res.status(200).json({message:"Logout successful"});
 }
-
 
 
 module.exports = {
