@@ -19,7 +19,7 @@ const usersRoute = require('./routes/usersRoute');
 
 const SERVER_PORT = process.env.SERVER_PORT;
 const server = http.createServer(app);
-initSocket(server); // Initialize Socket.IO and get the io instance
+initSocket(server);
 
 app.use('/api/auth', authRoute);
 app.use('/api/user', usersRoute);
