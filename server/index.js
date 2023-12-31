@@ -7,6 +7,9 @@ const connectDB = require('./configs/db');
 const initSocket = require('./configs/socket');
 const errorHandler = require('./middlewares/errorHandler');
 
+const authRoute = require('./routes/authRoute');
+const usersRoute = require('./routes/usersRoute');
+
 connectDB();
 
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
@@ -14,8 +17,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const authRoute = require('./routes/authRoute');
-const usersRoute = require('./routes/usersRoute');
 
 const SERVER_PORT = process.env.SERVER_PORT;
 const server = http.createServer(app);
