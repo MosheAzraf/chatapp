@@ -4,19 +4,19 @@ require('dotenv').config();
 
 const verifyJWT = async (req, res, next) => {
     try {
-        const tokenFromCookie = req.cookies.accessToken || req.handshake.query.token;
+        const tokenFromCookie = req.cookies.accessToken ;
 
         if (!tokenFromCookie) {
-            throw { status: 401, message: 'Authentication error. Token missing.' };
+            return res.status(403).json({"message":"forbidden, missing token. "})
         }
 
         const decoded = jwt.verify(tokenFromCookie, process.env.ACCESS_TOKEN_SECRET);
         const foundUser = await User.findOne({ userName: decoded.userName });
 
-        if (!foundUser) {
-            throw { status: 401, message: 'Authentication error. User not found.' };
+        if(!foundUser) {
+            return res.status(404).json({"message":"user not found."});
         }
-
+        
         req.user = foundUser;
         next();
     } catch (error) {

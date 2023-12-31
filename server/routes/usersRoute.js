@@ -4,7 +4,7 @@ const {getMe} = require('../controllers/usersController');
 
 const verifyJWT = require('../middlewares/verifyJWT');
 
-router.get('/getme', verifyJWT, getMe)
+router.get('/getme', verifyJWT, getMe);
 
 
 module.exports = router;
