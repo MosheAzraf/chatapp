@@ -52,8 +52,6 @@ const login = async (req, res, next) => {
         return res.status(400).json({"message":"Invalid credentials."});
     };
 
-    const { id, firstName, lastName, userName: foundUserName } = foundUser;
-
     const passwordIsValid = await bcrypt.compare(password, foundUser.password);
     if(passwordIsValid) {
         const accessToken = jwt.sign(
@@ -65,12 +63,10 @@ const login = async (req, res, next) => {
         //cookies
         res.cookie('accessToken', accessToken, {
             httpOnly: true, // The cookie is not accessible via client-side scripts
-            // secure: process.env.NODE_ENV === 'production', // Only send the cookie over HTTPS in production
+            secure: process.env.NODE_ENV === 'production', // Only send the cookie over HTTPS in production
             sameSite: 'strict', // Helps protect against CSRF attacks
             maxAge: 24 * 60 * 60 * 1000, // Cookie expires in 1 day (adjust as needed)
         });
-
-        // const userDataToSend = { id, firstName, lastName, userName: foundUserName };
 
         return res.status(200).json({"message":"Login successful"});
          
@@ -80,23 +76,15 @@ const login = async (req, res, next) => {
     
 };
 
-const logOut = async (req,res, next) => {
-    await res.clearCookie('accessToken');
-    return res.status(200).json({message:"Logout successful"});
+const logOut = (req, res) => {
+    const cookies = req.cookies
+    if (!cookies?.accessToken) return res.sendStatus(204) //No content
+    res.clearCookie('accessToken', { httpOnly: true, sameSite: 'None', secure: true });
+    res.json({ message: 'Cookie cleared' })
 }
-
 
 module.exports = {
     registerNewUser,
     login,
     logOut,
 }
-
-
-//modify logout this later
-// const logout = (req, res) => {
-//     const cookies = req.cookies
-//     if (!cookies?.jwt) return res.sendStatus(204) //No content
-//     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true })
-//     res.json({ message: 'Cookie cleared' })
-// }

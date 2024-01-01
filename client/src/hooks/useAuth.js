@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify';
 
 import { useDispatch } from 'react-redux';
-import { setLoggedIn, setLoggedOut } from '../redux/features/authSlice';
+import { setLoggedIn, setLoggedOut, setLoading } from '../redux/features/authSlice';
 
 const loginUser = async (credentials) => {
     const response = await axiosClient.post('/auth/login',credentials);
@@ -18,7 +18,7 @@ const logOut = async () => {
 }
 
 const verifyAuth = async () => {
-  const response = await axiosClient.post('/auth/verifyAuth');
+  const response = await axiosClient.get('/user/getMe');
   return response.data
 };
 
@@ -32,7 +32,7 @@ const useAuth = () => {
       mutationFn: loginUser,
       onSuccess: () => {
         dispatch(setLoggedIn());
-        sessionStorage.setItem('isLoggedIn', 'true');
+        // sessionStorage.setItem('isLoggedIn', 'true');
         toast.success('Successfully logged in.');
         navigate('/chat');
       },
@@ -47,7 +47,7 @@ const useAuth = () => {
       mutationFn: logOut,
       onSuccess: () => {
         dispatch(setLoggedOut());
-        sessionStorage.removeItem('isLoggedIn');
+        // sessionStorage.removeItem('isLoggedIn');
         toast.info('Logged out.');
         navigate('/login');
       },
@@ -57,15 +57,22 @@ const useAuth = () => {
     });
 
     const verifyAuthMutation = useMutation({
-      mutationFn:verifyAuth,
-      onSuccess: () => {
-        dispatch(setLoggedIn());
+      mutationFn: verifyAuth,
+      onMutate: () => {
+        dispatch(setLoading(true));
       },
-      onError: (error) => {
-        console.error(error);
+      onSuccess: (data) => {
+        dispatch(setLoggedIn(data));
       },
-
-    })
+      onError: () => {
+        dispatch(setLoggedOut());
+      },
+      onSettled: () => {
+        dispatch(setLoading(false));
+      }
+    });
+    
+    
 
     return {
       login: loginMutation.mutateAsync,
@@ -76,19 +83,3 @@ const useAuth = () => {
   
   export default useAuth;
 
-
-
-
-
-    // const loginMutation = useMutation({
-    //     mutationFn: loginUser,
-    //     onSuccess: () => {
-    //         queryClient.invalidateQueries(['verifyAuth']);
-    //         toast.success('Successfully logged in.');
-    //         navigate('/chat'); 
-    //     },
-    //     onError: () => {
-    //         navigate('/login');
-    //         toast.warn("Couldn't login properly, please try again.");
-    //     }
-    // });

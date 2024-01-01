@@ -4,10 +4,6 @@ import { ToastContainer } from 'react-toastify';
 import useAuth from './hooks/useAuth';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { setLoggedIn, setLoggedOut, } from './redux/features/authSlice';
-
-
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/Home'
 import Signup from './pages/Signup'
@@ -15,38 +11,28 @@ import Login from './pages/Login';
 import Chat from './pages/Chat'
 import AuthGuard from './components/AuthGuard'
 
+
+
 function App() {
-  const { verifyAuth } = useAuth();
-  const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const {verifyAuth} = useAuth();
+
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
-      dispatch(setLoggedIn());
-    } else {
-      const initAuth = async () => {
-        try {
-          await verifyAuth();
-        } catch (error) {
-          console.error(error);
-        }
-      };
-      initAuth();
+    const checkAuth = async () => {
+      await verifyAuth();
     }
-  }, [dispatch, verifyAuth]);
-  
-
-
+    
+    checkAuth();
+  },[verifyAuth]);
 
   return (
     <>
     <Routes>
-      <Route path='/' element={<RootLayout isAuth={isLoggedIn} />}>
+      <Route path='/' element={<RootLayout  />}>
         <Route path='home' element={<Home/>}/>
         <Route path='signup' element={<Signup/>}/>
         <Route path='login' element={<Login/>}/>
-        <Route path='chat' element={<AuthGuard isAuth={isLoggedIn}/>}>
+        <Route path='chat' element={<AuthGuard />}>
           <Route index element={<Chat/>}/>
         </Route> 
       </Route> 
