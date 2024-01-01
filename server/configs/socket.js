@@ -1,15 +1,17 @@
 const { Server } = require('socket.io');
 require('dotenv').config();
+const socketAuth = require('../middlewares/socketAuth');
 
 const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
       origin: process.env.CLIENT_URL,
-      methods: ['*'],
-      //allowedHeaders: ['my-custom-header'],
+      methods: ['*'], // can be change to => methods: ['GET', 'POST'],
       credentials: true,
     },
   });
+
+  io.use(socketAuth);
 
   io.on('connection', (socket) => {
     console.log(`user ${socket.id} connected.`);

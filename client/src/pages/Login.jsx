@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { BiHide, BiShow } from "react-icons/bi";
 import useAuth from "../hooks/useAuth";
-import {useNavigate} from 'react-router-dom'
 
 
 const Login = () => {

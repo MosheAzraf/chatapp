@@ -12,7 +12,7 @@ const loginUser = async (credentials) => {
     return response.data;
 };
 
-const logOut = async () => {
+const logoutUser = async () => {
     const response = await axiosClient.post('/auth/logout');
     return response.data;
 }
@@ -44,10 +44,9 @@ const useAuth = () => {
     
   
     const logOutMutation = useMutation({
-      mutationFn: logOut,
+      mutationFn: logoutUser,
       onSuccess: () => {
         dispatch(setLoggedOut());
-        // sessionStorage.removeItem('isLoggedIn');
         toast.info('Logged out.');
         navigate('/login');
       },
