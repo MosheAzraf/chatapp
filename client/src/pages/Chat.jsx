@@ -11,7 +11,9 @@ const Chat = () => {
     }
 
     return () => {
-      socket.disconnect();
+      if (socket.connected) {
+        socket.disconnect(); 
+      }
     }
   },[isLoggedIn]);
 
