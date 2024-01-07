@@ -12,17 +12,21 @@ const initSocket = (server) => {
     },
   });
 
-
-
+  let users = [];
 
   io.use(socketAuth);
 
   io.on('connection', (socket) => {
     console.log(`user ${socket.id} connected.`);
+    const userName = socket.handshake.query.userName;
+    console.log(`user with userName: ${userName} connected.`);
+    users.push({socketId: socket.id, userName: userName});
 
+    io.emit("getOnlineUsers", users)
 
     socket.on('disconnect', () => {
       console.log(`user ${socket.id} disconnected.`);
+      users = users.filter(user => user.socketId !== socket.id);
     });
   });
 
@@ -33,14 +37,3 @@ module.exports = initSocket;
 
 
 
-
-//auth example?:
-// io.use(async (socket, next) => {
-//   try {
-//     await verifyJWT(socket.request, {}, next);
-//   } catch (error) {
-//     // Handle authentication errors here
-//     console.error('Socket authentication error:', error.message);
-//     next(new Error('Authentication error.'));
-//   }
-// });
