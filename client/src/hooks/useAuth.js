@@ -6,6 +6,8 @@ import {toast} from 'react-toastify';
 
 import { useDispatch } from 'react-redux';
 import { setLoggedIn, setLoggedOut, setLoading } from '../redux/features/authSlice';
+import {setUser, clearUser} from '../redux/features/userSlice';
+
 
 const loginUser = async (credentials) => {
     const response = await axiosClient.post('/auth/login',credentials);
@@ -32,7 +34,6 @@ const useAuth = () => {
       mutationFn: loginUser,
       onSuccess: () => {
         dispatch(setLoggedIn());
-        // sessionStorage.setItem('isLoggedIn', 'true');
         toast.success('Successfully logged in.');
         navigate('/chat');
       },
@@ -62,9 +63,14 @@ const useAuth = () => {
       },
       onSuccess: (data) => {
         dispatch(setLoggedIn(data));
+        dispatch(setUser({
+          fullName: `${data.firstName} ${data.lastName}`,
+          userName: data.userName
+        }))
       },
       onError: () => {
         dispatch(setLoggedOut());
+        dispatch(clearUser());
       },
       onSettled: () => {
         dispatch(setLoading(false));

@@ -1,6 +1,11 @@
-const { Server } = require('socket.io');
 require('dotenv').config();
+const { Server } = require('socket.io');
+const Redis = require('ioredis');
 const socketAuth = require('../middlewares/socketAuth');
+
+
+
+const redisClient = new Redis();
 
 const initSocket = (server) => {
   const io = new Server(server, {
@@ -11,7 +16,15 @@ const initSocket = (server) => {
     },
   });
 
+
+
+
   io.use(socketAuth);
+
+  let users = [];
+
+
+
 
   io.on('connection', (socket) => {
     console.log(`user ${socket.id} connected.`);
@@ -28,8 +41,9 @@ const initSocket = (server) => {
 module.exports = initSocket;
 
 
-//add this after adding loggin in client side:
 
+
+//auth example?:
 // io.use(async (socket, next) => {
 //   try {
 //     await verifyJWT(socket.request, {}, next);
