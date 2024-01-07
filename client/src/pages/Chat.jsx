@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 const Chat = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userName = useSelector((state) => state.user.userName);
-
+  console.log(isLoggedIn, userName)
 
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const Chat = () => {
       socket.connect();
     }
 
-    
+
 
     return () => {
       socket.disconnect();
