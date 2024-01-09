@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const {getMe, findUser} = require('../controllers/usersController');
+const {getMe, findUsers} = require('../controllers/usersController');
 
 const verifyJWT = require('../middlewares/verifyJWT');
 
 
-router.get('/findUsers',verifyJWT, findUser);
+router.get('/findUsers',verifyJWT, findUsers);
 router.get('/getme', verifyJWT, getMe);
 
 
