@@ -57,7 +57,7 @@ const Chat = () => {
         <div className='w-px bg-gray-300'></div>
 
         <div>
-          <p>current chat</p>
+          <CurrentChat/>
         </div>
       </div>
 
