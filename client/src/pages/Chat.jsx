@@ -1,6 +1,9 @@
 import {useEffect, useState} from 'react'
 import {socket} from '../configs/socket'
 import { useSelector } from 'react-redux';
+import axiosClient from '../configs/axios';
+import SearchModal from '../components/SearchModal';
+
 
 const Chat = () => {
   //redux states
@@ -38,6 +41,7 @@ const Chat = () => {
       <hr />
 
       <div className='flex'>
+        <SearchModal/>
         <button>search users</button>
       </div>
       <hr />
