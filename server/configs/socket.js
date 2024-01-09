@@ -12,7 +12,7 @@ const initSocket = (server) => {
     },
   });
 
-  let users = [];
+  let onlineUsers = [];
 
   io.use(socketAuth);
 
@@ -20,14 +20,20 @@ const initSocket = (server) => {
     console.log(`user ${socket.id} connected.`);
     const userName = socket.handshake.query.userName;
     console.log(`user with userName: ${userName} connected.`);
-    users.push({socketId: socket.id, userName: userName});
+    onlineUsers.push({socketId: socket.id, userName: userName});
 
-    io.emit("getOnlineUsers", users)
+    const filteredUsers = () => {
+      return onlineUsers.filter((user) => user.socketId !== socket.id);
+    };
+
+    io.emit("getOnlineUsers", filteredUsers());
+
 
     socket.on('disconnect', () => {
       console.log(`user ${socket.id} disconnected.`);
-      users = users.filter(user => user.socketId !== socket.id);
+      onlineUsers = onlineUsers.filter(user => user.socketId !== socket.id);
     });
+
   });
 
   return io;

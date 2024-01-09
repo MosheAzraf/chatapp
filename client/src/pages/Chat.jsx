@@ -3,7 +3,7 @@ import {socket} from '../configs/socket'
 import { useSelector } from 'react-redux';
 import SearchModal from '../components/SearchModal';
 import ChatsList from "../components/ChatsList";
-
+import CurrentChat from "../components/CurrentChat";
 
 const Chat = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -23,7 +23,7 @@ const Chat = () => {
     }
 
     socket.on("getOnlineUsers", (data) => {
-      setOnlineUsers(data);
+      console.log(data);
     });
 
 
