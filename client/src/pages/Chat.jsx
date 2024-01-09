@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react'
 import {socket} from '../configs/socket'
 import { useSelector } from 'react-redux';
-import axiosClient from '../configs/axios';
 import SearchModal from '../components/SearchModal';
+import ChatsList from "../components/ChatsList";
 
 
 const Chat = () => {
@@ -50,7 +50,7 @@ const Chat = () => {
 
       <div className='grid grid-cols-3 items-stretch'>
         <div>
-          <p>chat list</p>
+          <ChatsList/>
         </div>
 
         {/* vartical line */}
