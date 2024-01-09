@@ -10,7 +10,7 @@ const useUserSearch = (searchTerm) => {
     return useQuery({
         queryKey: ['searchUsers', searchTerm],
         queryFn: () => findUsersFetch(searchTerm),
-        enabled: searchTerm.length > 0 // Only run query if searchTerm is not empty
+        enabled: searchTerm.length > 0, // Only run query if searchTerm is not empty
     });
 };
 

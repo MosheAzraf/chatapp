@@ -6,13 +6,12 @@ import SearchModal from '../components/SearchModal';
 
 
 const Chat = () => {
-  //redux states
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userName = useSelector((state) => state.user.userName);
   console.log(isLoggedIn, userName)
   
-  //react states
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -41,8 +40,11 @@ const Chat = () => {
       <hr />
 
       <div className='flex'>
-        <SearchModal/>
-        <button>search users</button>
+        <button onClick={() => setIsSearchModalOpen(true)}>Search Users</button>
+        <SearchModal
+          isOpen={isSearchModalOpen}
+          onClose={() => setIsSearchModalOpen(false)}
+        />
       </div>
       <hr />
 
