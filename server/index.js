@@ -23,7 +23,7 @@ const server = http.createServer(app);
 initSocket(server);
 
 app.use('/api/auth', authRoute);
-app.use('/api/user', usersRoute);
+app.use('/api/users', usersRoute);
 
 app.use(errorHandler);
 

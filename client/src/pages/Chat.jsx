@@ -2,9 +2,6 @@ import {useEffect, useState} from 'react'
 import {socket} from '../configs/socket'
 import { useSelector } from 'react-redux';
 
-
-
-
 const Chat = () => {
   //redux states
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);

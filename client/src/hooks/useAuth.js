@@ -20,7 +20,7 @@ const logoutUser = async () => {
 }
 
 const verifyAuth = async () => {
-  const response = await axiosClient.get('/user/getMe');
+  const response = await axiosClient.get('/users/getMe');
   return response.data
 };
 
