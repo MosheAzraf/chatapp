@@ -16,17 +16,39 @@ const initSocket = (server) => {
 
   io.use(socketAuth);
 
+
   io.on('connection', (socket) => {
-    console.log(`user ${socket.id} connected.`);
     const userName = socket.handshake.query.userName;
-    console.log(`user with userName: ${userName} connected.`);
-    onlineUsers.push({socketId: socket.id, userName: userName});
+    console.log(`user: ${userName} conntected, socketId: ${socket.id}`);
+    onlineUsers.push({ socketId: socket.id, userName: userName });
+    
 
-    const filteredUsers = () => {
-      return onlineUsers.filter((user) => user.socketId !== socket.id);
-    };
 
-    io.emit("getOnlineUsers", filteredUsers());
+    //manage online users
+    //-----------------------------//
+    //emit users without the current one..
+    const filteredOnlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id)
+    io.emit("getOnlineUsers", filteredOnlineUsers);
+    //-----------------------------//
+
+    //=================================//
+
+    //using rooms conecpt for private and gorup messaging, lets test it..
+    //-----------------------------//
+    socket.on("joinRoom", ({roomId}) => {
+      console.log(`user joined room: ${roomId}`);
+      socket.join(roomId);
+    }); 
+
+    socket.on("leaveRoom", ({ roomId }) => {
+      console.log(`User ${socket.id} left room: ${roomId}`);
+      socket.leave(roomId);
+    });
+
+    socket.on("sendMessage", ({roomId, message}) => {
+      io.to(roomId).emit("receiveMessage", message);
+    })
+    //-----------------------------//
 
 
     socket.on('disconnect', () => {

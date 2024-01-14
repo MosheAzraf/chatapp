@@ -9,10 +9,13 @@ const Chat = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userName = useSelector((state) => state.user.userName);
   console.log(isLoggedIn, userName)
-  
+
+  //might need that later..
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-
+  const [chatList, setChatList] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
 
   useEffect(() => {
     if(isLoggedIn && userName){
@@ -24,6 +27,7 @@ const Chat = () => {
 
     socket.on("getOnlineUsers", (data) => {
       console.log(data);
+      setOnlineUsers(data);
     });
 
 
@@ -60,9 +64,6 @@ const Chat = () => {
           <CurrentChat/>
         </div>
       </div>
-
-
-
     </div>
   )
 }
