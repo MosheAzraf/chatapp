@@ -14,8 +14,9 @@ const Chat = () => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [chatList, setChatList] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [currentChat, setCurrentChat] = useState(null);
+  //start a chat with a user that isn't on chat list..
+  const [chatWith, setChatWith] = useState("");
+
 
   useEffect(() => {
     if(isLoggedIn && userName){
@@ -48,6 +49,7 @@ const Chat = () => {
         <SearchModal
           isOpen={isSearchModalOpen}
           onClose={() => setIsSearchModalOpen(false)}
+          setChatWith={setChatWith}
         />
       </div>
       <hr />

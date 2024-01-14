@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import useUserSearch from '../hooks/useUserSearch';
 
-const SearchModal = ({isOpen, onClose}) => {
+const SearchModal = ({isOpen, onClose, setChatWith}) => {
     const [searchTerm, setSearchTerm] = useState("");
     const { data: users, isLoading, isError } = useUserSearch(searchTerm);
+
+    const closeModal = () => {
+        onClose();
+    }
+
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
 
+    //handle selecting of user to chat with..
+    const handleSelectedUser = (selectedUserName) => {
+        setChatWith(selectedUserName);
+        closeModal();
+    }
+
     const handleBackdropClick = (e) => {
         if(e.target.id === "modal-backdrop"){
-            onClose();
+            closeModal();
         }
     }
 
@@ -32,8 +43,12 @@ const SearchModal = ({isOpen, onClose}) => {
                 <ul>
                     {
                         users && users.map((user, index) => (
-                            <li key={index}>{user.userName}</li>
-                        ))
+                            <div key={index} className='flex space-x-2'>
+                                <p>{user.userName}</p>
+                                <button onClick={() => handleSelectedUser(user.userName) }>send message</button>
+                            </div>
+                            
+                            ))
                     }
                 </ul>
             
