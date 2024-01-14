@@ -39,31 +39,23 @@ const Chat = () => {
 
 
   return (
-    <div>
-      <h1>chat</h1>
-      <button onClick={() => console.log("users:",onlineUsers)}>get users</button>
-      <hr />
-
-      <div className='flex'>
-        <button onClick={() => setIsSearchModalOpen(true)}>Search Users</button>
+    
+    <div className="relative flex h-screen">      
+      {/* SearchModal */}
+      {isSearchModalOpen && (
         <SearchModal
           isOpen={isSearchModalOpen}
           onClose={() => setIsSearchModalOpen(false)}
           setChatWith={setChatWith}
         />
-      </div>
-      <hr />
+      )}
 
-      <div className='grid grid-cols-3 items-stretch'>
-        <div>
-          <ChatsList/>
+      <div className="flex w-full h-full">
+        <div className="w-1/4 bg-gray-200 p-4 overflow-y-auto">
+          <ChatsList />
         </div>
-
-        {/* vartical line */}
-        <div className='w-px bg-gray-300'></div>
-
-        <div>
-          <CurrentChat/>
+        <div className="flex flex-col w-3/4">
+          <CurrentChat />
         </div>
       </div>
     </div>

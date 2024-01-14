@@ -9,14 +9,9 @@ const RootLayout = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      {
-        isLoggedIn ? <PrivateNabar/> : <PublicNavbar/>
-      }
-      {/* Content */}
-      <div className="flex-grow p-4 bg-gray-100">
-        <Outlet/>
-      </div>
-    </div>
+    {isLoggedIn ? <PrivateNabar /> : <PublicNavbar />}
+    <Outlet />
+  </div>
   );
 };
 
