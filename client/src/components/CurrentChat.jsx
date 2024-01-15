@@ -11,7 +11,7 @@ const CurrentChat = ({ socket}) => {
     socket.emit("joinRoom", {roomId: chatWith});
     
     socket.on("receiveMessage", (data) => {
-      setMessage((prev) => [...prev, data]);
+      setMessages((prev) => [...prev, data]);
       console.log(data);
       console.log(messages);
     })
@@ -23,7 +23,9 @@ const CurrentChat = ({ socket}) => {
   },[socket, chatWith]);
 
   const handleMessage = (e) => {
-    e.target.value;
+    e.preventDefault();
+    const msg = e.target.value;
+    setMessage(msg);
   };
 
   const sendMessage = () => {
