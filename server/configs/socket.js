@@ -36,8 +36,8 @@ const initSocket = (server) => {
     //using rooms conecpt for private and gorup messaging, lets test it..
     //-----------------------------//
     socket.on("joinRoom", ({roomId}) => {
-      console.log(`user joined room: ${roomId}`);
       socket.join(roomId);
+      console.log(`user joined room: ${roomId}`);
     }); 
 
     socket.on("leaveRoom", ({ roomId }) => {
@@ -47,7 +47,7 @@ const initSocket = (server) => {
 
     socket.on("sendMessage", ({roomId, message}) => {
       io.to(roomId).emit("receiveMessage", message);
-    })
+    });
     //-----------------------------//
 
 

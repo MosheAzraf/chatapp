@@ -1,13 +1,27 @@
 import { useState } from "react";
 import useUserSearch from "../hooks/useUserSearch";
+import { useSelector, useDispatch } from "react-redux";
+import {setChatWith} from '../redux/features/chatSlice'
 
 const NavbarSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: users, isLoading, isError } = useUserSearch(searchTerm);
+  const userName = useSelector((state) => state.user.userName);
+  console.log("navbarsearch:",userName);
+  const dispatch = useDispatch();
+
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+
   };
+
+  const handleSelectedUserToChatWith = (userToChatWith) => {
+    console.log(userToChatWith);
+    const roomId = [userName, userToChatWith].sort().join('_');
+    dispatch(setChatWith(roomId));
+  }
+  
 
   return (
     <div className="relative">
@@ -31,7 +45,7 @@ const NavbarSearch = () => {
               <p className="flex-1 truncate text-black">{user.userName}</p>
               <div className="flex space-x-1">
                 <button
-                  onClick={() => handleSelectedUser(user.userName)}
+                  onClick={() => handleSelectedUserToChatWith(user.userName)}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-xs flex-shrink-0"
                 >
                   Send Message

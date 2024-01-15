@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react'
 import {socket} from '../configs/socket'
-import { useSelector } from 'react-redux';
-import SearchModal from '../components/SearchModal';
+import { useSelector, useDispatch } from 'react-redux';
 import ChatsList from "../components/ChatsList";
 import CurrentChat from "../components/CurrentChat";
 
@@ -12,11 +11,7 @@ const Chat = () => {
 
   //might need that later..
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [chatList, setChatList] = useState([]);
-  //start a chat with a user that isn't on chat list..
-  const [chatWith, setChatWith] = useState("");
-
 
   useEffect(() => {
     if(isLoggedIn && userName){
@@ -32,6 +27,7 @@ const Chat = () => {
     });
 
 
+
     return () => {
       socket.disconnect();
     }
@@ -41,21 +37,12 @@ const Chat = () => {
   return (
     
     <div className="relative flex h-screen">      
-      {/* SearchModal */}
-      {isSearchModalOpen && (
-        <SearchModal
-          isOpen={isSearchModalOpen}
-          onClose={() => setIsSearchModalOpen(false)}
-          setChatWith={setChatWith}
-        />
-      )}
-
       <div className="flex w-full h-full">
         <div className="w-1/4 bg-gray-200 p-4 overflow-y-auto">
           <ChatsList />
         </div>
         <div className="flex flex-col w-3/4">
-          <CurrentChat />
+          <CurrentChat socket={socket}/>
         </div>
       </div>
     </div>
