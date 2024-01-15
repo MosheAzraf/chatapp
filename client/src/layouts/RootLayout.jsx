@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
-import PublicNavbar from '../components/PublicNavbar';
 import PrivateNabar from '../components/PrivateNavbar'
+import PublicNavbar from '../components/PublicNavbar'
 import { useSelector } from 'react-redux';
 
 
@@ -10,8 +10,8 @@ const RootLayout = () => {
   return (
     <div className="flex flex-col h-screen">
     {isLoggedIn ? <PrivateNabar /> : <PublicNavbar />}
-    <Outlet />
-  </div>
+      <Outlet />
+    </div>
   );
 };
 
