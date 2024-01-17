@@ -7,9 +7,8 @@ const NavbarSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: users, isLoading, isError } = useUserSearch(searchTerm);
   const userName = useSelector((state) => state.user.userName);
-  console.log("navbarsearch:",userName);
+  console.log("current user:", userName);
   const dispatch = useDispatch();
-
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -17,9 +16,11 @@ const NavbarSearch = () => {
   };
 
   const handleSelectedUserToChatWith = (userToChatWith) => {
-    console.log(userToChatWith);
+    console.log("start chat with:", userToChatWith);
     const roomId = [userName, userToChatWith].sort().join('_');
+    console.log("roomId:", roomId);
     dispatch(setChatWith(roomId));
+    setSearchTerm("");
   }
   
 

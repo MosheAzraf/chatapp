@@ -45,8 +45,9 @@ const initSocket = (server) => {
       socket.leave(roomId);
     });
 
-    socket.on("sendMessage", ({roomId, message}) => {
-      io.to(roomId).emit("receiveMessage", message);
+    socket.on("sendMessage", ({roomId, from, message}) => {
+      console.log(message);
+      io.to(roomId).emit("receiveMessage", {roomId:roomId, from:from, message:message});
     });
     //-----------------------------//
 
