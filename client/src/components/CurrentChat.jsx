@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const CurrentChat = ({ socket }) => {
   const [inputMessage, setInputMessage] = useState("");
@@ -8,17 +8,14 @@ const CurrentChat = ({ socket }) => {
   const chatWith = useSelector((state) => state.chat.startChatWith);
   const currentUser = useSelector((state) => state.user.userName);
 
-
-  console.log("chatwith:", chatWith);
-
   useEffect(() => {
     socket.emit("joinRoom", { roomId: chatWith });
 
     socket.on("receiveMessage", (data) => {
-      console.log(data.from, data.message);
-      setMessages((prev) => [...prev,
+      setMessages((prev) => [
+        ...prev,
         { from: data.from, message: data.message },
-      ]);    
+      ]);
     });
 
     return () => {
@@ -28,9 +25,13 @@ const CurrentChat = ({ socket }) => {
   }, [socket, chatWith]);
 
   const handleMessage = (e) => {
-    e.preventDefault();
-    const msg = e.target.value;
-    setInputMessage(msg);
+    setInputMessage(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
   };
 
   const sendMessage = () => {
@@ -40,58 +41,55 @@ const CurrentChat = ({ socket }) => {
         from: currentUser,
         message: inputMessage,
       });
+      setInputMessage("");
     }
   };
 
   return (
     <div className="flex flex-col h-full">
-      <h1 className="">chat with : {chatWith}</h1>
+      {/* Chat header */}
+      <h1 className="p-4">Chat with: {chatWith}</h1>
 
       {/* Messages */}
-      <div
-        className="flex-grow overflow-y-auto p-4"
-        style={{ marginBottom: "4rem" }}
-      >
-        {messages &&
-          messages.map((msg, index) => {
-            // Check if the current message is the first message or if the sender is different from the previous message
-            const showSenderName =
-              index === 0 || messages[index - 1].from !== msg.from;
-
-            return (
-              <div
-                key={index}
-                className={`flex ${
-                  msg.from === currentUser ? "justify-start" : "justify-end"
-                } hover:bg-gray-300`}
-              >
-                <div className="flex flex-col">
-                  {showSenderName && (
-                    <p className="text-black font-bold">{msg.from}</p>
-                  )}
-                  <p>{msg.message}</p>
-                </div>
+      <div className="flex-1 overflow-y-auto p-4">
+        {messages.map((msg, index) => {
+          const showSenderName =
+            index === 0 || messages[index - 1].from !== msg.from;
+          return (
+            <div
+              key={index}
+              className={`flex ${
+                msg.from === currentUser ? "justify-start" : "justify-end"
+              }`}
+            >
+              <div className="flex flex-col">
+                {showSenderName && (
+                  <p className="text-black font-bold">{msg.from}</p>
+                )}
+                <p className="break-words">{msg.message}</p>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
       </div>
 
       {/* Input Area */}
-      <div className="mt-auto px-4 w-full max-w-[calc(100%-4rem)] mx-auto bg-white border-t border-gray-300">
-        {/* Adjust max-w-[calc(100%-4rem)] to match the message container width */}
-        <div className="flex gap-2">
+      <div className="mt-auto">
+        <div className="flex items-center w-full p-4 bg-white border-t border-gray-300">
           <input
-            type="text"
-            className="flex-1 p-2 border border-gray-300 rounded"
-            placeholder="Type a message..."
-            value={inputMessage}
+            className="flex-1 py-2 px-3 rounded-l-full bg-gray-100 focus:outline-none"
+            onKeyDown={handleKeyPress}
             onChange={handleMessage}
+            type="text"
+            placeholder="Type your message"
+            value={inputMessage}
           />
           <button
+            className="flex-shrink-0 py-2 px-4 bg-blue-500 text-white rounded-r-full hover:bg-blue-600"
+            onKeyDown={handleKeyPress}
             onClick={sendMessage}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
-            Send Message
+            Send
           </button>
         </div>
       </div>
