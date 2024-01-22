@@ -54,17 +54,3 @@ function App() {
 }
 
 export default App
-
-//BASIC CONNECTION SETUP WITH MESG SENDING AS FUNCTION
-// import { socket } from "./socket"
-// useEffect(() => {
-//   socket.connect();
-
-//   return () => {
-//     socket.disconnect();
-//   }
-// },[]);
-
-// const sendMessage = () => {
-//   socket.emit("send_message", {message:input});
-// }
