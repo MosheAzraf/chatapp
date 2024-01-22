@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 const CurrentChat = ({ socket }) => {
   const [inputMessage, setInputMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   const chatWith = useSelector((state) => state.chat.startChatWith);
   const currentUser = useSelector((state) => state.user.userName);
+
 
   useEffect(() => {
     socket.emit("joinRoom", { roomId: chatWith });
@@ -23,6 +25,10 @@ const CurrentChat = ({ socket }) => {
       socket.off("receiveMessage");
     };
   }, [socket, chatWith]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]); 
 
   const handleMessage = (e) => {
     setInputMessage(e.target.value);
@@ -68,6 +74,7 @@ const CurrentChat = ({ socket }) => {
             </div>
           );
         })}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="flex-none p-4 bg-white border-t border-gray-300">
