@@ -1,25 +1,24 @@
 import { useState } from "react";
 import useUserSearch from "../hooks/useUserSearch";
-import { useSelector, useDispatch } from "react-redux";
-import {setChatWith} from '../redux/features/chatSlice'
+import { useDispatch,useSelector } from "react-redux";
+import { setChat } from "../redux/features/chatSlice";
 
 const NavbarSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: users, isLoading, isError } = useUserSearch(searchTerm);
-  const userName = useSelector((state) => state.user.userName);
-  console.log("current user:", userName);
+
   const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user.userName);
+
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-
   };
 
-  const handleSelectedUserToChatWith = (userToChatWith) => {
-    console.log("start chat with:", userToChatWith);
-    const roomId = [userName, userToChatWith].sort().join('_');
-    console.log("roomId:", roomId);
-    dispatch(setChatWith(roomId));
+  const handleSelectedUserToChatWith = (sendTo) => {
+    const roomId = [currentUser, sendTo].sort().join('_');
+    dispatch(setChat({roomId,sendTo}));
+    console.log("chat initiated with:", {roomid: roomId, sendTo})
     setSearchTerm("");
   }
   

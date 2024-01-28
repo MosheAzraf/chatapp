@@ -6,12 +6,13 @@ const CurrentChat = ({ socket }) => {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
-  const chatWith = useSelector((state) => state.chat.startChatWith);
   const currentUser = useSelector((state) => state.user.userName);
-
+  const room = useSelector((state) => state.chat.roomId);
+  const chatWith = useSelector((state) => state.chat.sendTo);
+  console.log(chatWith)
 
   useEffect(() => {
-    socket.emit("joinRoom", { roomId: chatWith });
+    socket.emit("joinRoom", { roomId: room });
 
     socket.on("receiveMessage", (data) => {
       setMessages((prev) => [
@@ -21,7 +22,7 @@ const CurrentChat = ({ socket }) => {
     });
 
     return () => {
-      socket.emit("leaveRoom", { roomId: chatWith });
+      socket.emit("leaveRoom", { roomId: room });
       socket.off("receiveMessage");
     };
   }, [socket, chatWith]);
@@ -40,11 +41,12 @@ const CurrentChat = ({ socket }) => {
     }
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (inputMessage.trim() !== "") {
-      socket.emit("sendMessage", {
-        roomId: chatWith,
+      await socket.emit("sendMessage", {
+        roomId: room,
         from: currentUser,
+        to:chatWith,
         message: inputMessage,
       });
       setInputMessage("");

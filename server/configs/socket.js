@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Server } = require('socket.io');
 const socketAuth = require('../middlewares/socketAuth');
-
+const chatBLL = require('../bll/chatBL');
 
 const initSocket = (server) => {
   const io = new Server(server, {
@@ -45,7 +45,9 @@ const initSocket = (server) => {
       socket.leave(roomId);
     });
 
-    socket.on("sendMessage", ({roomId, from, message}) => {
+    socket.on("sendMessage", async ({roomId,from, to, message}) => {
+      await chatBLL.addChat(from,to);
+
       console.log(message);
       io.to(roomId).emit("receiveMessage", {roomId:roomId, from:from, message:message});
     });
