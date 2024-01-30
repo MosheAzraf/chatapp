@@ -34,7 +34,7 @@ const Chat = () => {
   return (
     <div className="flex flex-1 overflow-hidden"> {/* flex-1 to fill the space, overflow-hidden to prevent additional scrolling */}
       <div className="w-1/4 bg-gray-200 p-4 overflow-y-auto">
-        <ChatsList />
+        <ChatsList socket={socket}/>
       </div>
       <div className="flex flex-col w-3/4">
         <CurrentChat socket={socket} />

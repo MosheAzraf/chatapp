@@ -35,8 +35,9 @@ const addChat = async (userName1, userName2) => {
         console.log(`successfuly created chat with ${user1.userName} and ${user2.userName}`);
 
 
-        await userModel.findOne({_id:user1._id}, { $push: {chats: newChat._id}});
-        await userModel.findOne({_id:user2._id}, { $push: {chats: newChat._id}});
+        await userModel.updateOne({_id: user1._id}, { $push: { chats: newChat._id } });
+        await userModel.updateOne({_id: user2._id}, { $push: { chats: newChat._id } });
+
     
     } catch(error) {
         console.error(error.message);
@@ -45,18 +46,29 @@ const addChat = async (userName1, userName2) => {
 
 const getChatList = async (userName) => {
     try {
-        
-        const user = await userModel.findOne({userName:userName})
-        if(!user) {
-            throw new Error ('user is not exist.');
+        const user = await userModel.findOne({ userName: userName })
+                                    .populate({
+                                        path: 'chats',
+                                        populate: {
+                                            path: 'users',
+                                            select: 'userName'
+                                        }
+                                    });
+
+        if (!user) {
+            throw new Error('User does not exist.');
         };
 
-        //const userChatList = await 
 
-    } catch(error) {
-        console.error(error.message);
+        return user.chats;
+
+    } catch (error) {
+        console.error("Error in getChatList:", error.message);
+        throw error;
     }
 };
+
+
 
 
 

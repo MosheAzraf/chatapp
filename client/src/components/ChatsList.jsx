@@ -1,21 +1,61 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
+import { useSelector,useDispatch } from 'react-redux';
+import ChatDetails from './ChatDetails';
 
-const test = [
-  {id:1, name:"a"},
-  {id:2, name:"b"},
-  {id:3, name:"c"},
-  {id:4, name:"d"},
-  {id:5, name:"e"},
-]
 
-const ChatsList = () => {
+const ChatsList = ({socket}) => {
+  const [chatsList,setChatsList] = useState([]);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [isGroup, setIsGroup] = useState(false);
+  const [isContacts, setIsContacts] = useState(false);
+  
+  const userName = useSelector((state) => state.user.userName);
+  const dispatch = useDispatch();//i'll use it to set the room id. 
+
+
+
+
+
+
+  useEffect(() => {    
+    
+    const loadData = () => {
+      socket.emit("loadChatList", {userName});
+      
+      socket.on("receiveChatList",  (data) => {
+        console.log(data);
+        setChatsList(data);
+      })
+    }
+    loadData()
+
+    return () => {
+      socket.off("loadChatList");
+      socket.off("reciveChatsList");
+    }
+  },[socket]);
+
+
+
+
   return (
     <div>
+      
       <ul>
         {
-          test.map((t, index) => (
-            <li key={index}>{t.name}</li>
-          ))
+          chatsList && chatsList.map((chat, index) => {
+            const otherUser = chat.users.filter((user) => user.userName !== userName)
+            console.log(otherUser)
+            
+            return (
+              <li key={index} >
+                {
+                  otherUser[0].userName
+                }
+            </li>
+            )
+          })
+
         }
       </ul>
     </div>
