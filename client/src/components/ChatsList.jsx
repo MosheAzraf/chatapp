@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react'
+
 import { useSelector,useDispatch } from 'react-redux';
+import {setChat, clearChat} from '../redux/features/chatSlice'
+
 import ChatDetails from './ChatDetails';
+
+import { RiChatPrivateFill } from "react-icons/ri"; //private chat
+import { FaPeopleGroup } from "react-icons/fa6"; // group
+import { RiContactsFill } from "react-icons/ri"; // contacts
+
+
+
 
 
 const ChatsList = ({socket}) => {
@@ -10,10 +20,12 @@ const ChatsList = ({socket}) => {
   const [isContacts, setIsContacts] = useState(false);
   
   const userName = useSelector((state) => state.user.userName);
-  const dispatch = useDispatch();//i'll use it to set the room id. 
+  const dispatch = useDispatch();
 
-
-
+  const setCurrentChat = (roomId, sendTo) => {
+    console.log(roomId, sendTo)
+    dispatch(setChat({roomId, sendTo}))
+  }
 
 
 
@@ -32,6 +44,7 @@ const ChatsList = ({socket}) => {
     return () => {
       socket.off("loadChatList");
       socket.off("reciveChatsList");
+      dispatch(clearChat());
     }
   },[socket]);
 
@@ -39,8 +52,14 @@ const ChatsList = ({socket}) => {
 
 
   return (
-    <div>
-      
+    <div className=''>
+      <div className=''>
+        <ul className='grid grid-cols-3 row-span-3 gap-8'>
+          <li><RiChatPrivateFill/></li>
+          <li><FaPeopleGroup/></li>
+          <li><RiContactsFill/></li>
+        </ul>
+      </div>
       <ul>
         {
           chatsList && chatsList.map((chat, index) => {
@@ -48,7 +67,7 @@ const ChatsList = ({socket}) => {
             console.log(otherUser)
             
             return (
-              <li key={index} >
+              <li className='' key={index} onClick={() => setCurrentChat(chat._id, otherUser[0].userName)}>
                 {
                   otherUser[0].userName
                 }

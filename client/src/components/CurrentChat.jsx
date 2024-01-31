@@ -9,10 +9,12 @@ const CurrentChat = ({ socket }) => {
   const currentUser = useSelector((state) => state.user.userName);
   const room = useSelector((state) => state.chat.roomId);
   const chatWith = useSelector((state) => state.chat.sendTo);
-  console.log(chatWith)
+  console.log("chatWith:", chatWith)
 
   useEffect(() => {
-    socket.emit("joinRoom", { roomId: room });
+    if(room){
+      socket.emit("joinRoom", { roomId: room });
+    }
 
     socket.on("receiveMessage", (data) => {
       setMessages((prev) => [

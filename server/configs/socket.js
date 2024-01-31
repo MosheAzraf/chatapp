@@ -54,7 +54,7 @@ const initSocket = (server) => {
       socket.leave(roomId);
     });
 
-    socket.on("sendMessage", async ({roomId,from, to, message,userName}) => {
+    socket.on("sendMessage", async ({roomId,from, to, message}) => {
       await chatBLL.addChat(from,to);
       //updates both users chat list in real-time.
       //current user
