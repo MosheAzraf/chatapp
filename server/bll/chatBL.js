@@ -24,23 +24,17 @@ const addChat = async (userName1, userName2) => {
             users: { $all: [user1._id, user2._id] }
         });
 
-        if(isChatExist){
-            throw new Error(`chat beween users ${userName1} and ${userName2} already exist`);
-        };
+        if(!isChatExist) {
+            const newChat = await chatModel.create({
+                users:[user1._id, user2._id]
+            });
 
-        const newChat = await chatModel.create({
-            users:[user1._id, user2._id]
-        });
-
-        console.log(`successfuly created chat with ${user1.userName} and ${user2.userName}`);
-
-
-        await userModel.updateOne({_id: user1._id}, { $push: { chats: newChat._id } });
-        await userModel.updateOne({_id: user2._id}, { $push: { chats: newChat._id } });
-
-    
+            await userModel.updateOne({_id: user1._id}, { $push: { chats: newChat._id } });
+            await userModel.updateOne({_id: user2._id}, { $push: { chats: newChat._id } });
+        }
     } catch(error) {
         console.error(error.message);
+        throw error;
     }
 };
 
@@ -68,11 +62,54 @@ const getChatList = async (userName) => {
     }
 };
 
+const addMessageToChat = async (chatId, from, message) => {
+    try {
+
+        const chat = await chatModel.findOne({_id:chatId});
+        
+        if(!chat){
+            throw new Error(`chat is not exist.`);
+        }
+
+        const newMessage = {
+            from:from,
+            text:message,
+            timestamp: new Date()
+        };
+
+        chat.messages.push(newMessage);
+
+        await chat.save();
+
+    } catch(error) {
+        console.error(error.message);
+        throw error;
+    }
+};
+
+const getChatMessages = async (chatId) => {
+    try {
+        const foundChat = await chatModel.findOne({_id:chatId});
+
+        if(!foundChat) {
+            throw new Error(`chat ${chatId} is not exist.`);
+        }
+
+        return foundChat.messages;
+
+    } catch (error) {
+        console.error(error.message);
+        throw error;
+    }
+}
+
 
 
 
 
 module.exports = { 
     addChat,
-    getChatList
+    getChatList,
+    addMessageToChat,
+    getChatMessages
 };

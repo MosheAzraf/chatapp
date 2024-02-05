@@ -44,7 +44,9 @@ const initSocket = (server) => {
 
     //using rooms conecpt for private and gorup messaging
     //-----------------------------//
-    socket.on("joinRoom", ({roomId}) => {
+    socket.on("joinRoom", async ({roomId}) => {
+      const chatMessages = await chatBLL.getChatMessages(roomId);
+      io.to(roomId).emit("loadChatMessages", chatMessages);
       socket.join(roomId);
       console.log(`user joined room: ${roomId}`);
     });
@@ -56,6 +58,7 @@ const initSocket = (server) => {
 
     socket.on("sendMessage", async ({roomId,from, to, message}) => {
       await chatBLL.addChat(from,to);
+      await chatBLL.addMessageToChat(roomId, from, message);
       //updates both users chat list in real-time.
       //current user
       const currentUserChatList = await chatBLL.getChatList(from);
@@ -69,11 +72,11 @@ const initSocket = (server) => {
         const toUserChatList = await chatBLL.getChatList(toUser.userName);
         io.to(toUser.socketId).emit("receiveChatList", toUserChatList)
       } else {
-        //push message to chat
+        await chatBLL.addMessageToChat(roomId,from,message);
       }
 
       console.log(message);
-      io.to(roomId).emit("receiveMessage", {roomId:roomId, from:from, message:message});
+      io.to(roomId).emit("receiveMessage", {from:from, message:message});
     });
     //-----------------------------//
 
