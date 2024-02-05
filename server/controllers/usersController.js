@@ -1,4 +1,5 @@
-const User = require('../models/userModel');
+const userModel = require('../models/userModel');
+
 
 const getMe = async (req, res, next) => {
     try {
@@ -33,7 +34,7 @@ const findUsers = async (req, res, next) => {
             ]
         };
 
-        const users = await User.find(query).select("userName firstName lastName");
+        const users = await userModel.find(query).select("userName firstName lastName");
 
         return res.status(200).json({ results: users });
 
@@ -41,6 +42,7 @@ const findUsers = async (req, res, next) => {
         return res.status(500).json({ message: error.message });
     }
 }
+
 
 
 module.exports = {
