@@ -1,24 +1,22 @@
 import { useState } from "react";
 import useUserSearch from "../hooks/useUserSearch";
-import { useDispatch,useSelector } from "react-redux";
-import { setChat } from "../redux/features/chatSlice";
+import { useDispatch } from "react-redux";
+import { setChatWith } from "../redux/features/chatSlice";
+
 
 const NavbarSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: users, isLoading, isError } = useUserSearch(searchTerm);
 
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user.userName);
-
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
   const handleSelectedUserToChatWith = (sendTo) => {
-    const roomId = [currentUser, sendTo].sort().join('_');
-    dispatch(setChat({roomId,sendTo}));
-    console.log("chat initiated with:", {roomid: roomId, sendTo})
+    console.log(sendTo);
+    dispatch(setChatWith({sendTo}))
     setSearchTerm("");
   }
   
@@ -28,6 +26,7 @@ const NavbarSearch = () => {
       <input
         onChange={handleSearchChange}
         type="text"
+        value={searchTerm}
         placeholder="Search for users / groups"
         className="w-full pl-10 pr-3 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-black"
       />
@@ -48,7 +47,7 @@ const NavbarSearch = () => {
                   onClick={() => handleSelectedUserToChatWith(user.userName)}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-xs flex-shrink-0"
                 >
-                  Send Message
+                  Start Chat
                 </button>
                 <button className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-1 px-2 rounded text-xs flex-shrink-0">
                   Block
@@ -65,3 +64,23 @@ const NavbarSearch = () => {
 };
 
 export default NavbarSearch;
+
+// socket.emit('createChat', { from: currentUser, to: sendTo }, (response) => {
+//   if (response.success) {
+//       // Use the chatId returned from the server
+//       const roomId = response.chatId;
+//       dispatch(setChat({ roomId, sendTo }));
+//       console.log("Chat initiated with:", { roomId, sendTo });
+//   } else {
+//       // Handle any errors (e.g., display an error message)
+//       console.error("Error creating chat:", response.error);
+//   }
+// });
+
+
+// const handleSelectedUserToChatWith = (sendTo) => {
+//   const roomId = [currentUser, sendTo].sort().join('_');
+//   dispatch(setChat({roomId,sendTo}));
+//   console.log("chat initiated with:", {roomid: roomId, sendTo})
+//   setSearchTerm("");
+// }

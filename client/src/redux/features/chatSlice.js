@@ -2,22 +2,22 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     roomId:"",
-    sendTo:""
+    sendTo:"",
+    isNewChat:false
 }
 
 const chatSlice = createSlice({
     name:'chat',
     initialState,
     reducers:{
-        setChat : (state, action) => {
-            state.roomId = action.payload.roomId
-            state.sendTo = action.payload.sendTo
+        setChatWith : (state, action) => {
+            state.sendTo = action.payload.sendTo;
         },
-        clearChat:(state, action) => {
-            state = initialState;
-        }
+        setChatRoomId:(state, action) => {
+            state.roomId = action.payload.roomId;
+        },
     }
 });
 
-export const {setChat, clearChat} = chatSlice.actions;
+export const {setChatWith,setChatRoomId } = chatSlice.actions;
 export default chatSlice.reducer;

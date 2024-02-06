@@ -1,37 +1,41 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setChatRoomId } from "../redux/features/chatSlice";
 
 const CurrentChat = ({ socket }) => {
   const [inputMessage, setInputMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
+  const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.userName);
-  const room = useSelector((state) => state.chat.roomId);
+  const roomId = useSelector((state) => state.chat.roomId);
   const chatWith = useSelector((state) => state.chat.sendTo);
-  console.log("chatWith:", chatWith)
+  console.log("chatWith:", chatWith);
 
   useEffect(() => {
-    if(room){
-      socket.emit("joinRoom", { roomId: room });
+    if (roomId) {
+      socket.emit("joinRoom", { roomId: roomId });
+      socket.on("loadChatMessages", (data) => {
+        setMessages(data);
+      });
     }
 
     socket.on("receiveMessage", (data) => {
-      setMessages((prev) => [
-        ...prev,
-        { from: data.from, message: data.message },
-      ]);
+      console.log("receiveMessage", data);
+      setMessages((prev) => [...prev, data]);
     });
 
     return () => {
-      socket.emit("leaveRoom", { roomId: room });
+      socket.emit("leaveRoom", { roomId: roomId });
       socket.off("receiveMessage");
+      socket.off("loadChatMessages");
     };
-  }, [socket, chatWith]);
+  }, [socket, roomId, chatWith]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]); 
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleMessage = (e) => {
     setInputMessage(e.target.value);
@@ -44,15 +48,36 @@ const CurrentChat = ({ socket }) => {
   };
 
   const sendMessage = async () => {
-    if (inputMessage.trim() !== "") {
-      await socket.emit("sendMessage", {
-        roomId: room,
-        from: currentUser,
-        to:chatWith,
-        message: inputMessage,
-      });
-      setInputMessage("");
+    if (inputMessage.trim() !== "" && chatWith.length > 0) {
+      if (!roomId) {
+        // Create chat only if roomId does not exist
+        socket.emit(
+          "createChat",
+          { from: currentUser, to: chatWith },
+          (response) => {
+            if (response.success) {
+              const newRoomId = response.chatId;
+              dispatch(setChatRoomId({ roomId: newRoomId }));
+              emitMessage(newRoomId);
+            } else {
+              console.error("Error creating chat:", response.error);
+            }
+          }
+        );
+      } else {
+        emitMessage(roomId);
+      }
     }
+  };
+
+  const emitMessage = (roomId) => {
+    socket.emit("sendMessage", {
+      roomId: roomId,
+      from: currentUser,
+      to: chatWith,
+      message: inputMessage,
+    });
+    setInputMessage("");
   };
 
   return (
@@ -71,9 +96,12 @@ const CurrentChat = ({ socket }) => {
             >
               <div className="flex flex-col">
                 {showSenderName && (
-                  <p className="text-black font-bold">{msg.from}</p>
+                  <p className="text-black font-bold">
+                    {msg.from} {msg.time}{" "}
+                  </p>
                 )}
-                <p className="break-words">{msg.message}</p>
+
+                <p className="break-words">{msg.text}</p>
               </div>
             </div>
           );
@@ -105,3 +133,15 @@ const CurrentChat = ({ socket }) => {
 };
 
 export default CurrentChat;
+
+// socket.emit('createChat', { from: currentUser, to: sendTo }, (response) => {
+//   if (response.success) {
+//       // Use the chatId returned from the server
+//       const roomId = response.chatId;
+//       dispatch(setChat({ roomId, sendTo }));
+//       console.log("Chat initiated with:", { roomId, sendTo });
+//   } else {
+//       // Handle any errors (e.g., display an error message)
+//       console.error("Error creating chat:", response.error);
+//   }
+// });

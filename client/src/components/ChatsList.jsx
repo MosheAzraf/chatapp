@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 
 import { useSelector,useDispatch } from 'react-redux';
-import {setChat, clearChat} from '../redux/features/chatSlice'
+import { setChatWith, setChatRoomId} from '../redux/features/chatSlice'
 
-import ChatDetails from './ChatDetails';
 
 import { RiChatPrivateFill } from "react-icons/ri"; //private chat
 import { FaPeopleGroup } from "react-icons/fa6"; // group
@@ -20,31 +19,33 @@ const ChatsList = ({socket}) => {
   const [isContacts, setIsContacts] = useState(false);
   
   const userName = useSelector((state) => state.user.userName);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch();//i'll use it to set the room id. 
 
   const setCurrentChat = (roomId, sendTo) => {
     console.log(roomId, sendTo)
-    dispatch(setChat({roomId, sendTo}))
+    dispatch(setChatRoomId({roomId}))
+    dispatch(setChatWith({sendTo}))
   }
 
 
 
   useEffect(() => {    
-    
-    const loadData = () => {
-      socket.emit("loadChatList", {userName});
+    //this can be
+    const loadData = async () => {
+      await socket.emit("loadChatList", {userName});
       
-      socket.on("receiveChatList",  (data) => {
+      socket.on("receiveChatList", (data) => {
         console.log(data);
         setChatsList(data);
       })
     }
-    loadData()
+    loadData();
+
+
 
     return () => {
       socket.off("loadChatList");
       socket.off("reciveChatsList");
-      dispatch(clearChat());
     }
   },[socket]);
 
@@ -63,15 +64,14 @@ const ChatsList = ({socket}) => {
       <ul>
         {
           chatsList && chatsList.map((chat, index) => {
-            const otherUser = chat.users.filter((user) => user.userName !== userName)
-            console.log(otherUser)
-            
+            const filteredUser = chat.users.filter((user) => user.userName !== userName);
+            const otherUser = filteredUser[0].userName;
             return (
-              <li className='' key={index} onClick={() => setCurrentChat(chat._id, otherUser[0].userName)}>
+              <li className='' key={index} onClick={() => setCurrentChat(chat._id, otherUser)}>
                 {
-                  otherUser[0].userName
+                  otherUser
                 }
-            </li>
+              </li>
             )
           })
 

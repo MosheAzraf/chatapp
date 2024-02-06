@@ -2,6 +2,7 @@ require('dotenv').config();
 const { Server } = require('socket.io');
 const socketAuth = require('../middlewares/socketAuth');
 const chatBLL = require('../bll/chatBL');
+const formatDate = require('../utils/dateFormator');
 
 const initSocket = (server) => {
   const io = new Server(server, {
@@ -40,15 +41,29 @@ const initSocket = (server) => {
       })
     //-----------------------------//
     
-
+    //handle new chat in case there isn't one
+    //-----------------------------//
+    socket.on('createChat', async ({ from, to }, callback) => {
+      try {
+          const chat = await chatBLL.addChat(from, to);
+          callback({ success: true, chatId: chat._id.toString() }); // Send the chatId
+      } catch (error) {
+          console.error('Error in createChat:', error.message);
+          callback({ success: false, error: error.message });
+      }
+    });
+    //-----------------------------//
+    
 
     //using rooms conecpt for private and gorup messaging
     //-----------------------------//
     socket.on("joinRoom", async ({roomId}) => {
-      const chatMessages = await chatBLL.getChatMessages(roomId);
-      io.to(roomId).emit("loadChatMessages", chatMessages);
       socket.join(roomId);
       console.log(`user joined room: ${roomId}`);
+
+      const chatMessages = await chatBLL.getChatMessages(roomId);
+      io.to(roomId).emit("loadChatMessages", chatMessages);
+      
     });
 
     socket.on("leaveRoom", ({ roomId }) => {
@@ -56,27 +71,27 @@ const initSocket = (server) => {
       socket.leave(roomId);
     });
 
-    socket.on("sendMessage", async ({roomId,from, to, message}) => {
-      await chatBLL.addChat(from,to);
-      await chatBLL.addMessageToChat(roomId, from, message);
-      //updates both users chat list in real-time.
-      //current user
+    socket.on("sendMessage", async ({roomId, from, to, message}) => {
+      const date = formatDate();
+  
+      // Add the message directly, addChat is handled in addMessageToChat if necessary
+      await chatBLL.addMessageToChat(roomId, from, to, message, date);
+  
+      // Update chat lists for both users
       const currentUserChatList = await chatBLL.getChatList(from);
-      io.to(socket.id).emit("receiveChatList", currentUserChatList)
-
-      //other user
-      //check if other user is online
-      const toUser = onlineUsers.find((user) => user.userName === to);
-      //emit other user its chats list
-      if(toUser) {
-        const toUserChatList = await chatBLL.getChatList(toUser.userName);
-        io.to(toUser.socketId).emit("receiveChatList", toUserChatList)
-      } else {
-        await chatBLL.addMessageToChat(roomId,from,message);
+      io.to(socket.id).emit("receiveChatList", currentUserChatList);
+  
+      const toUserOnline = onlineUsers.find(user => user.userName === to);
+      if (toUserOnline) {
+          const toUserChatList = await chatBLL.getChatList(to);
+          io.to(toUserOnline.socketId).emit("receiveChatList", toUserChatList);
       }
-
-      console.log(message);
-      io.to(roomId).emit("receiveMessage", {from:from, message:message});
+  
+      io.to(roomId).emit("receiveMessage", {
+          from: from,
+          text: message,
+          time: date
+      });
     });
     //-----------------------------//
 
