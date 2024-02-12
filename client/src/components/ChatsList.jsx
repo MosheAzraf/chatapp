@@ -19,7 +19,7 @@ const ChatsList = ({socket}) => {
   const [isContacts, setIsContacts] = useState(false);
   
   const userName = useSelector((state) => state.user.userName);
-  const dispatch = useDispatch();//i'll use it to set the room id. 
+  const dispatch = useDispatch();
 
   const setCurrentChat = (roomId, sendTo) => {
     console.log(roomId, sendTo)
@@ -27,30 +27,27 @@ const ChatsList = ({socket}) => {
     dispatch(setChatWith({sendTo}))
   }
 
+  useEffect(() => {
+    socket.on("receiveChatList", (data) => {
+      console.log("Chat list received:", data);
+      setChatsList(data);
+    });
 
+    socket.on("receiveChatListError", (errorData) => {
+      console.error("Error receiving chat list:", errorData.error);
+    });
 
-  useEffect(() => {    
-    //this can be
-    const loadData = async () => {
-      await socket.emit("loadChatList", {userName});
-      
-      socket.on("receiveChatList", (data) => {
-        console.log(data);
-        setChatsList(data);
-      })
+    if (userName) {
+      socket.emit("loadChatList", { userName });
+    } else {
+      console.error("UserName is undefined");
     }
-    loadData();
-
-
 
     return () => {
-      socket.off("loadChatList");
-      socket.off("reciveChatsList");
-    }
-  },[socket]);
-
-
-
+      socket.off("receiveChatList");
+      socket.off("receiveChatListError");
+    };
+  }, [socket, userName]);
 
   return (
     <div className=''>
@@ -82,3 +79,20 @@ const ChatsList = ({socket}) => {
 }
 
 export default ChatsList
+
+// useEffect(() => {    
+//   const loadData = async () => {
+//     await socket.emit("loadChatList", {userName});
+    
+//     await socket.on("receiveChatList", (data) => {
+//       console.log(data);
+//       setChatsList(data);
+//     })
+//   }
+//   loadData();
+
+//   return () => {
+//     socket.off("loadChatList");
+//     socket.off("reciveChatsList");
+//   }
+// },[socket]);

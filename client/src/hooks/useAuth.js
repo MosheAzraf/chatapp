@@ -6,7 +6,7 @@ import {toast} from 'react-toastify';
 
 import { useDispatch } from 'react-redux';
 import { setLoggedIn, setLoggedOut, setLoading } from '../redux/features/authSlice';
-import {setUser, clearUser} from '../redux/features/userSlice';
+import {setUser, setIsLoading as setIsLoadingUser} from '../redux/features/userSlice';
 
 
 const loginUser = async (credentials) => {
@@ -60,9 +60,11 @@ const useAuth = () => {
       mutationFn: verifyAuth,
       onMutate: () => {
         dispatch(setLoading(true));
+        dispatch(setIsLoadingUser(true));
       },
       onSuccess: (data) => {
-        dispatch(setLoggedIn(data));
+        dispatch(setLoggedIn(false));
+        dispatch(setIsLoadingUser(false));
         dispatch(setUser({
           fullName: `${data.firstName} ${data.lastName}`,
           userName: data.userName
@@ -70,7 +72,6 @@ const useAuth = () => {
       },
       onError: () => {
         dispatch(setLoggedOut());
-        dispatch(clearUser());
       },
       onSettled: () => {
         dispatch(setLoading(false));
